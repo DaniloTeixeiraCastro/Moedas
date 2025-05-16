@@ -108,7 +108,7 @@ int main(int argc, const char* argv[]) {
 		for (int i = 0; i < nMoedas; i++) {
 			if (moedas[i].area > 8000) {
 				// Mostrar informações
-				std::string text = "CENTRO DE MASSA - x: " + std::to_string(moedas[i].xc) +
+				std::string text = "x: " + std::to_string(moedas[i].xc) +
 					", y: " + std::to_string(moedas[i].yc);
 				cv::putText(frameorig, text, cv::Point(moedas[i].xc + 90, moedas[i].yc - 40),
 					cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 0), 2);
@@ -129,10 +129,8 @@ int main(int argc, const char* argv[]) {
 
 				// Mostrar contadores
 				text = "NR TOTAL DE MOEDAS: " + std::to_string(mTotal);
-				cv::putText(frameorig, text, cv::Point(20, 25),
-					cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 0), 2);
-				cv::putText(frameorig, text, cv::Point(20, 25),
-					cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 8, 255), 1);
+				cv::putText(frameorig, text, cv::Point(20, 30),
+					cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(255, 8, 255), 1);
 
 				// (Repetir para os outros contadores...)
 
@@ -140,7 +138,7 @@ int main(int argc, const char* argv[]) {
 				cv::rectangle(frameorig,
 					cv::Point(moedas[i].x, moedas[i].y),
 					cv::Point(moedas[i].x + moedas[i].width, moedas[i].y + moedas[i].height),
-					cv::Scalar(255, 0, 0), 2);
+					cv::Scalar(0, 255, 0), 2);
 
 				// Verificar se a moeda cruzou a linha
 				if (frameorig.rows / 4 >= moedas[i].yc - 15 &&
