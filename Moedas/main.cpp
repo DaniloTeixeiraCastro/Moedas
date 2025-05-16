@@ -3,10 +3,25 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include "vc.h" // Mantendo sua estrutura original, mas adaptada para cv::Mat
+#include <iostream>
 
 int main(int argc, const char* argv[]) {
-	// VÌdeo
-	const std::string videofile = "C:/Moedas/videos/video1.mp4";
+	// Menu de sele√ß√£o de v√≠deo
+	std::cout << "Escolha o v√≠deo para processar:\n";
+	std::cout << "1 - C:/Moedas/videos/video1.mp4\n";
+	std::cout << "2 - C:/Moedas/videos/video2.mp4\n";
+	std::cout << "Opcao: ";
+	int opcao = 0;
+	std::cin >> opcao;
+	std::string videofile;
+	if (opcao == 1) {
+		videofile = "C:/Moedas/videos/video1.mp4";
+	} else if (opcao == 2) {
+		videofile = "C:/Moedas/videos/video2.mp4";
+	} else {
+		std::cerr << "Op√ß√£o inv√°lida!\n";
+		return 1;
+	}
 
 	cv::VideoCapture capture(videofile);
 
@@ -15,15 +30,15 @@ int main(int argc, const char* argv[]) {
 		return 1;
 	}
 
-	// Propriedades do vÌdeo
+	// Propriedades do v√≠deo
 	int totalFrames = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_COUNT)),
 		fps = static_cast<int>(capture.get(cv::CAP_PROP_FPS)),
 		width = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_WIDTH)),
 		height = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_HEIGHT));
 
-	cv::namedWindow("Vis„o por Computador - TP2", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("Vis√£o por Computador - TP2", cv::WINDOW_AUTOSIZE);
 
-	// Vari·veis para contagem de moedas
+	// Vari√°veis para contagem de moedas
 	std::vector<OVC> passou(100);
 	int cont = 0;
 	int mTotal = 0;
@@ -46,14 +61,14 @@ int main(int argc, const char* argv[]) {
 		// Processamento de imagem
 		cv::Mat framethr, frameaux;
 
-		// SubstituiÁ„o da funÁ„o idBlobs
+		// Substitui√ß√£o da fun√ß√£o idBlobs
 		// idBlobs(frameorig, framethr, 12, 150, 35, 255, 20, 150);
-		// ImplementaÁ„o alternativa:
+		// Implementa√ß√£o alternativa:
 		cv::Mat hsv;
 		cv::cvtColor(frameorig, hsv, cv::COLOR_BGR2HSV);
 		cv::inRange(hsv, cv::Scalar(12, 35, 20), cv::Scalar(150, 255, 150), framethr);
 
-		// OperaÁ„o morfolÛgica
+		// Opera√ß√£o morfol√≥gica
 		cv::morphologyEx(framethr, framethr, cv::MORPH_OPEN,
 			cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3)),
 			cv::Point(-1, -1), 5);
@@ -61,9 +76,9 @@ int main(int argc, const char* argv[]) {
 		// Rotulagem de blobs
 		int nMoedas = 0;
 		std::vector<OVC> moedas;
-		// SubstituiÁ„o de vc_binary_blob_labelling
+		// Substitui√ß√£o de vc_binary_blob_labelling
 		// moedas = vc_binary_blob_labelling(framethr, frameaux, &nMoedas);
-		// ImplementaÁ„o alternativa:
+		// Implementa√ß√£o alternativa:
 		std::vector<std::vector<cv::Point>> contours;
 		cv::findContours(framethr.clone(), contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
@@ -92,7 +107,7 @@ int main(int argc, const char* argv[]) {
 		// Processar cada moeda detectada
 		for (int i = 0; i < nMoedas; i++) {
 			if (moedas[i].area > 8000) {
-				// Mostrar informaÁıes
+				// Mostrar informa√ß√µes
 				std::string text = "CENTRO DE MASSA - x: " + std::to_string(moedas[i].xc) +
 					", y: " + std::to_string(moedas[i].yc);
 				cv::putText(frameorig, text, cv::Point(moedas[i].xc + 90, moedas[i].yc - 40),
@@ -156,13 +171,13 @@ int main(int argc, const char* argv[]) {
 			}
 		}
 
-		cv::imshow("Vis„o por Computador - TP2", frameorig);
+		cv::imshow("Vis√£o por Computador - TP2", frameorig);
 
 		int key = cv::waitKey(80);
 		if (key == 'q') break;
 	}
 
-	cv::destroyWindow("Vis„o por Computador - TP2");
+	cv::destroyWindow("Vis√£o por Computador - TP2");
 	capture.release();
 
 	escreverInfo(fp, cont, mTotal, m200, m100, m50, m20, m10, m5, m2, m1, videofile.c_str());
