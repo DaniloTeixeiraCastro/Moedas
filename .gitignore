@@ -1,0 +1,49 @@
+# Visual Studio files
+.vs/**
+**/.vs/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.db
+*.opendb
+*.obj
+*.pdb
+*.ilk
+*.log
+*.tlog
+*.idb
+*.ipch
+*.recipe
+*.FileListAbsolute.txt
+*.vcxproj.filters
+*.sln.docstates
+*.userosscache
+*.VC.db
+*.VC.VC.opendb
+
+# OpenCV (pasta completa)
+Moedas/opencv/
+
+# Arquivos de objeto e bibliotecas
+*.slo
+*.lo
+*.o
+*.so
+*.dylib
+*.dll
+
+# Arquivos temporários
+*.tmp
+~*
+*.swp
+*.bak
+
+# Arquivos específicos do projeto
+videos/

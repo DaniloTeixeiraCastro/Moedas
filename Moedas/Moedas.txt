@@ -1,0 +1,66 @@
+== VIDEO: C:/Users/ricardo marques/Desktop/Moedas/videos/video1.mp4 | HORA: 13-5-2025 13:54:56 ==
+NUMERO DE MOEDAS: 12
+ -2 EUROS: 3
+ -1 EURO: 0
+ -50 CENT: 4
+ -20 CENT: 2
+ -10 CENT: 0
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Users/ricardo marques/Desktop/Moedas/videos/video1.mp4 | HORA: 13-5-2025 13:57:5 ==
+NUMERO DE MOEDAS: 12
+ -2 EUROS: 3
+ -1 EURO: 0
+ -50 CENT: 4
+ -20 CENT: 2
+ -10 CENT: 0
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Users/ricardo marques/Desktop/Moedas/videos/video1.mp4 | HORA: 13-5-2025 20:47:18 ==
+NUMERO DE MOEDAS: 12
+ -2 EUROS: 3
+ -1 EURO: 0
+ -50 CENT: 4
+ -20 CENT: 2
+ -10 CENT: 0
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Users/ricardo marques/Desktop/Moedas/videos/video1.mp4 | HORA: 13-5-2025 20:50:21 ==
+NUMERO DE MOEDAS: 12
+ -2 EUROS: 3
+ -1 EURO: 0
+ -50 CENT: 4
+ -20 CENT: 2
+ -10 CENT: 0
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Users/ricardo marques/Desktop/Moedas/videos/video1.mp4 | HORA: 13-5-2025 20:51:35 ==
+NUMERO DE MOEDAS: 12
+ -2 EUROS: 3
+ -1 EURO: 0
+ -50 CENT: 4
+ -20 CENT: 2
+ -10 CENT: 0
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 16-5-2025 19:35:34 ==
+NUMERO DE MOEDAS: 12
+ -2 EUROS: 3
+ -1 EURO: 0
+ -50 CENT: 4
+ -20 CENT: 2
+ -10 CENT: 0
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
