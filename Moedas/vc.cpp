@@ -31,25 +31,26 @@ int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
     if (r > 100 && r > b + 40 && r > g + 40) return 0; // vermelho
     if (b > 80 && r > 80 && abs(b - r) < 40 && g < 80) return 0; // roxo
 
-    if (area > 30000 || area < 8000) return 0;
+    // Filtros gerais
+    if (area > 30000 || area < 3000) return 0;
     if (circularity < 0.35) return 0;
 
-    // 50 CENT: área 18000-30000, perímetro 500-900
-    if (area >= 18000 && area <= 30000 && perimeter >= 500 && perimeter < 900) return 50;
-    // 2 EUR: área 14000-18000, perímetro 500-700
-    else if (area >= 14000 && area < 18000 && perimeter >= 500 && perimeter < 700) return 200;
-    // 1 EUR: área 12000-16000, perímetro 400-700
-    else if (area >= 12000 && area < 16000 && perimeter >= 400 && perimeter < 700) return 100;
-    // 20 CENT: área 10000-14000, perímetro 350-600
-    else if (area >= 10000 && area < 14000 && perimeter >= 350 && perimeter < 600) return 20;
+    // 50 CENT: área 20000-25000, perímetro 500-800
+    if (area >= 20000 && area < 25000 && perimeter >= 500 && perimeter < 800) return 50;
+    // 2 EUR: área 16000-20000, perímetro 500-700
+    else if (area >= 16000 && area < 20000 && perimeter >= 500 && perimeter < 700) return 200;
+    // 1 EUR: área 14000-18000, perímetro 450-700
+    else if (area >= 14000 && area < 18000 && perimeter >= 450 && perimeter < 700) return 100;
+    // 20 CENT: área 11000-14000, perímetro 350-600
+    else if (area >= 11000 && area < 14000 && perimeter >= 350 && perimeter < 600) return 20;
     // 10 CENT: área 9000-12000, perímetro 300-600
     else if (area >= 9000 && area < 12000 && perimeter >= 300 && perimeter < 600) return 10;
     // 5 CENT: área 7000-10000, perímetro 250-500
     else if (area >= 7000 && area < 10000 && perimeter >= 250 && perimeter < 500) return 5;
     // 2 CENT: área 5000-8000, perímetro 200-400
     else if (area >= 5000 && area < 8000 && perimeter >= 200 && perimeter < 400) return 2;
-    // 1 CENT: área 3000-6000, perímetro 100-350
-    else if (area >= 3000 && area < 6000 && perimeter >= 100 && perimeter < 350) return 1;
+    // 1 CENT: área 3000-7000, perímetro 100-400
+    else if (area >= 3000 && area < 7000 && perimeter >= 100 && perimeter < 400) return 1;
     return 0;
 }
 
@@ -159,7 +160,12 @@ OVC* vc_binary_blob_labelling(cv::Mat src, cv::Mat dst, int* nlabels) {
     if (src.empty() || dst.empty() || src.cols <= 0 || src.rows <= 0 || src.channels() != 1 ||
         src.cols != dst.cols || src.rows != dst.rows || dst.channels() != 1) return NULL;
     cv::Mat gray = src.clone();
-    cv::threshold(gray, gray, 0, 255, cv::THRESH_BINARY);
+    for (int y = 0; y < gray.rows; ++y) {
+        for (int x = 0; x < gray.cols; ++x) {
+            uchar& pixel = gray.at<uchar>(y, x);
+            pixel = (pixel > 127) ? 255 : 0;
+        }
+    }
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(gray, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
     *nlabels = contours.size();
@@ -191,22 +197,55 @@ int vc_binary_blob_info(cv::Mat src, OVC* blobs, int nblobs) {
 // Desenha a bounding box e centro
 int vc_desenha_bounding_box(cv::Mat src, OVC blobs) {
     if (src.empty() || src.cols <= 0 || src.rows <= 0 || src.channels() != 3) return 0;
-    cv::rectangle(src, cv::Point(blobs.x, blobs.y), cv::Point(blobs.x + blobs.width, blobs.y + blobs.height), cv::Scalar(0, 8, 255), 2);
-    cv::circle(src, cv::Point(blobs.xc, blobs.yc), 10, cv::Scalar(0, 8, 255), 2);
+    // Desenhar bounding box manualmente (vermelho)
+    for (int x = blobs.x; x < blobs.x + blobs.width; ++x) {
+        if (x >= 0 && x < src.cols) {
+            if (blobs.y >= 0 && blobs.y < src.rows)
+                src.at<cv::Vec3b>(blobs.y, x) = cv::Vec3b(0, 0, 255);
+            if (blobs.y + blobs.height - 1 >= 0 && blobs.y + blobs.height - 1 < src.rows)
+                src.at<cv::Vec3b>(blobs.y + blobs.height - 1, x) = cv::Vec3b(0, 0, 255);
+        }
+    }
+    for (int y = blobs.y; y < blobs.y + blobs.height; ++y) {
+        if (y >= 0 && y < src.rows) {
+            if (blobs.x >= 0 && blobs.x < src.cols)
+                src.at<cv::Vec3b>(y, blobs.x) = cv::Vec3b(0, 0, 255);
+            if (blobs.x + blobs.width - 1 >= 0 && blobs.x + blobs.width - 1 < src.cols)
+                src.at<cv::Vec3b>(y, blobs.x + blobs.width - 1) = cv::Vec3b(0, 0, 255);
+        }
+    }
+    // Desenhar centroide manualmente (círculo pequeno)
+    int raio = 8;
+    for (int dy = -raio; dy <= raio; ++dy) {
+        for (int dx = -raio; dx <= raio; ++dx) {
+            int xx = blobs.xc + dx;
+            int yy = blobs.yc + dy;
+            if (xx >= 0 && xx < src.cols && yy >= 0 && yy < src.rows) {
+                if (dx * dx + dy * dy <= raio * raio)
+                    src.at<cv::Vec3b>(yy, xx) = cv::Vec3b(0, 0, 255);
+            }
+        }
+    }
     return 1;
 }
 
 // Desenha linha verde de referência
 int desenha_linhaVerde(cv::Mat frame) {
     if (frame.empty() || frame.cols <= 0 || frame.rows <= 0 || frame.channels() != 3) return 0;
-    cv::line(frame, cv::Point(0, frame.rows / 4), cv::Point(frame.cols, frame.rows / 4), cv::Scalar(0, 255, 0), 2);
+    int y = frame.rows / 4;
+    for (int x = 0; x < frame.cols; ++x) {
+        frame.at<cv::Vec3b>(y, x) = cv::Vec3b(0, 255, 0);
+    }
     return 1;
 }
 
 // Desenha linha vermelha de referência
 int desenha_linhaVermelha(cv::Mat frame) {
     if (frame.empty() || frame.cols <= 0 || frame.rows <= 0 || frame.channels() != 3) return 0;
-    cv::line(frame, cv::Point(0, frame.rows / 4), cv::Point(frame.cols, frame.rows / 4), cv::Scalar(0, 0, 255), 2);
+    int y = frame.rows / 4;
+    for (int x = 0; x < frame.cols; ++x) {
+        frame.at<cv::Vec3b>(y, x) = cv::Vec3b(0, 0, 255);
+    }
     return 1;
 }
 

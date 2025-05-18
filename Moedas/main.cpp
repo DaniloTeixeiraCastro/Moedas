@@ -9,6 +9,22 @@
 #include <vector>
 #include <iomanip>
 
+// Função para calcular a média de cor (BGR) de um ROI
+cv::Vec3b mediaCorROI(const cv::Mat& img, int x, int y, int width, int height) {
+    long sumB = 0, sumG = 0, sumR = 0, count = 0;
+    for (int j = y; j < y + height && j < img.rows; ++j) {
+        for (int i = x; i < x + width && i < img.cols; ++i) {
+            cv::Vec3b pixel = img.at<cv::Vec3b>(j, i);
+            sumB += pixel[0];
+            sumG += pixel[1];
+            sumR += pixel[2];
+            count++;
+        }
+    }
+    if (count == 0) return cv::Vec3b(0, 0, 0);
+    return cv::Vec3b((uchar)(sumB / count), (uchar)(sumG / count), (uchar)(sumR / count));
+}
+
 int main(int argc, const char* argv[]) {
     std::string videofile;
     if (argc == 2) {
@@ -29,7 +45,7 @@ int main(int argc, const char* argv[]) {
             videofile = "C:/Moedas/videos/video2.mp4";
         }
         else {
-            std::cerr << "Opção inválida!\n";
+            std::cerr << "Opcao inválida!\n";
             return 1;
         }
     }
@@ -115,9 +131,8 @@ int main(int argc, const char* argv[]) {
                 cv::putText(frameorig, text, cv::Point(moedas[i].xc + 90, moedas[i].yc),
                     cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 8, 255), 1);
 
-                // Calcular média de cor do blob
-                cv::Scalar meanColorScalar = cv::mean(frameorig(cv::Rect(moedas[i].x, moedas[i].y, moedas[i].width, moedas[i].height)));
-                cv::Vec3b meanColor((uchar)meanColorScalar[0], (uchar)meanColorScalar[1], (uchar)meanColorScalar[2]);
+                // Calcular média de cor do blob (substitui cv::mean e cv::Rect)
+                cv::Vec3b meanColor = mediaCorROI(frameorig, moedas[i].x, moedas[i].y, moedas[i].width, moedas[i].height);
                 // Só processar moedas com circularidade razoável e tipo reconhecido
                 int tipo = idMoeda(moedas[i].area, moedas[i].perimeter, moedas[i].circularity, meanColor);
                 std::string tipoText;
