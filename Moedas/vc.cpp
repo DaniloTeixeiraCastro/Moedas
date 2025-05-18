@@ -26,26 +26,32 @@ int verificaPassouAntes(OVC* passou, OVC moedas, int cont) {
 // Classifica o tipo de moeda com base em área, perímetro e circularidade
 int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
     // Filtros gerais
-    if (area > 30000 || area < 3000) return 0;
-    if (circularity < 0.35) return 0;
+    if (area > 35000 || area < 3000) return 0;
+    if (circularity < 0.05) return 0;
 
-    // 50 CENT: área 20000-25000, perímetro 500-800
-    if (area >= 20000 && area < 25000 && perimeter >= 500 && perimeter < 800) return 50;
-    // 2 EUR: área 16000-20000, perímetro 500-700
-    else if (area >= 16000 && area < 20000 && perimeter >= 500 && perimeter < 700) return 200;
-    // 1 EUR: área 14000-18000, perímetro 450-700
-    else if (area >= 14000 && area < 18000 && perimeter >= 450 && perimeter < 700) return 100;
-    // 20 CENT: área 11000-14000, perímetro 350-600
-    else if (area >= 11000 && area < 14000 && perimeter >= 350 && perimeter < 600) return 20;
-    // 10 CENT: área 9000-12000, perímetro 300-600
-    else if (area >= 9000 && area < 12000 && perimeter >= 300 && perimeter < 600) return 10;
-    // 5 CENT: área 7000-10000, perímetro 250-500
-    else if (area >= 7000 && area < 10000 && perimeter >= 250 && perimeter < 500) return 5;
-    // 2 CENT: área 5000-8000, perímetro 200-400
-    else if (area >= 5000 && area < 8000 && perimeter >= 200 && perimeter < 400) return 2;
-    // 1 CENT: área 3000-7000, perímetro 100-400
-    else if (area >= 3000 && area < 7000 && perimeter >= 100 && perimeter < 400) return 1;
-    return 0;
+    // 2 EUR: área observada ~18744
+    if (area >= 26000 && area < 29000 && perimeter >= 600 && perimeter < 700) return 200;
+
+    // 1 EUR: área observada ~17174
+    else if (area >= 20500 && area < 24000 && perimeter >= 520 && perimeter < 600) return 100;
+
+    // 50 CENT: área esperada entre 1 EUR e 2 EUR
+    else if (area >= 22500 && area < 26000 && perimeter >= 480 && perimeter < 520) return 50;
+
+    // 20 CENT: observado com área ~11073 e perímetro ~431
+    else if (area >= 18500 && area < 22000 && perimeter >= 400 && perimeter < 460) return 20;
+
+    // 10 CENT: esperado ser um pouco menor que 20 CENT
+    else if (area >= 14500 && area < 17500 && perimeter >= 350 && perimeter < 400) return 10;
+
+    // 5 CENT: esperado ser menor que 10 CENT
+    else if (area >= 17000 && area < 20500 && perimeter >= 300 && perimeter < 350) return 5;
+
+    // 2 CENT: esperado ser menor que 5 CENT
+    else if (area >= 13000 && area < 16000 && perimeter >= 600 && perimeter < 700) return 2;
+
+    // 1 CENT: esperado ser a menor moeda
+    else if (area >= 9500 && area < 12500 && perimeter >= 200 && perimeter < 250) return 1;
 }
 
 // Salva informações das moedas
