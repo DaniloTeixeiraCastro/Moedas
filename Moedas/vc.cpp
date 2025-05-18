@@ -25,12 +25,6 @@ int verificaPassouAntes(OVC* passou, OVC moedas, int cont) {
 
 // Classifica o tipo de moeda com base em área, perímetro e circularidade
 int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
-    // Filtro por cor: ignorar objetos predominantemente azuis, vermelhos ou roxos
-    int b = meanColor[0], g = meanColor[1], r = meanColor[2];
-    if (b > 100 && b > r + 40 && b > g + 40) return 0; // azul
-    if (r > 100 && r > b + 40 && r > g + 40) return 0; // vermelho
-    if (b > 80 && r > 80 && abs(b - r) < 40 && g < 80) return 0; // roxo
-
     // Filtros gerais
     if (area > 30000 || area < 3000) return 0;
     if (circularity < 0.35) return 0;
@@ -194,38 +188,19 @@ int vc_binary_blob_info(cv::Mat src, OVC* blobs, int nblobs) {
     return 1;
 }
 
-// Desenha a bounding box e centro
+// Desenha círculo em volta da moeda e centro
 int vc_desenha_bounding_box(cv::Mat src, OVC blobs) {
     if (src.empty() || src.cols <= 0 || src.rows <= 0 || src.channels() != 3) return 0;
-    // Desenhar bounding box manualmente (vermelho)
-    for (int x = blobs.x; x < blobs.x + blobs.width; ++x) {
-        if (x >= 0 && x < src.cols) {
-            if (blobs.y >= 0 && blobs.y < src.rows)
-                src.at<cv::Vec3b>(blobs.y, x) = cv::Vec3b(0, 0, 255);
-            if (blobs.y + blobs.height - 1 >= 0 && blobs.y + blobs.height - 1 < src.rows)
-                src.at<cv::Vec3b>(blobs.y + blobs.height - 1, x) = cv::Vec3b(0, 0, 255);
-        }
-    }
-    for (int y = blobs.y; y < blobs.y + blobs.height; ++y) {
-        if (y >= 0 && y < src.rows) {
-            if (blobs.x >= 0 && blobs.x < src.cols)
-                src.at<cv::Vec3b>(y, blobs.x) = cv::Vec3b(0, 0, 255);
-            if (blobs.x + blobs.width - 1 >= 0 && blobs.x + blobs.width - 1 < src.cols)
-                src.at<cv::Vec3b>(y, blobs.x + blobs.width - 1) = cv::Vec3b(0, 0, 255);
-        }
-    }
-    // Desenhar centroide manualmente (círculo pequeno)
-    int raio = 8;
-    for (int dy = -raio; dy <= raio; ++dy) {
-        for (int dx = -raio; dx <= raio; ++dx) {
-            int xx = blobs.xc + dx;
-            int yy = blobs.yc + dy;
-            if (xx >= 0 && xx < src.cols && yy >= 0 && yy < src.rows) {
-                if (dx * dx + dy * dy <= raio * raio)
-                    src.at<cv::Vec3b>(yy, xx) = cv::Vec3b(0, 0, 255);
-            }
-        }
-    }
+    
+    // Calcular o raio baseado na área da moeda
+    float raio = sqrt(blobs.area / CV_PI);
+    
+    // Desenhar círculo vermelho ao redor da moeda
+    cv::circle(src, cv::Point(blobs.xc, blobs.yc), static_cast<int>(raio), cv::Scalar(0, 0, 255), 1);
+    
+    // Desenhar centroide (círculo pequeno vermelho)
+    cv::circle(src, cv::Point(blobs.xc, blobs.yc), 3, cv::Scalar(0, 0, 255), -1);
+    
     return 1;
 }
 
