@@ -33,13 +33,13 @@ int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
     if (area >= 26000 && area < 29000 && perimeter >= 700 && perimeter < 800) return 200;
 
     // 1 EUR:
-    else if (area >= 20500 && area < 24000 && perimeter >= 600 && perimeter < 750) return 100;
+    else if (area >= 20610 && area < 24000 && perimeter >= 600 && perimeter < 750) return 100;
 
     // 50 CENT:
     else if (area >= 24000 && area < 26000 && perimeter >= 600 && perimeter < 800) return 50;
 
     // 20 CENT:
-    else if (area >= 19500 && area < 22000 && perimeter >= 550 && perimeter < 650) return 20;
+    else if (area >= 19500 && area < 22000 && perimeter >= 550 && perimeter < 720) return 20;
 
     // 10 CENT: 
     else if (area >= 16000 && area < 17500 && perimeter >= 500 && perimeter < 650) return 10;
@@ -48,10 +48,10 @@ int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
     else if (area >= 17500 && area < 20000 && perimeter >= 550 && perimeter < 700) return 5;
 
     // 2 CENT: 
-    else if (area >= 12500 && area < 15500 && perimeter >= 450 && perimeter < 550) return 2;
+    else if (area >= 12500 && area < 15500 && perimeter >= 450 && perimeter < 620) return 2;
 
     // 1 CENT: 
-    else if (area >= 8000 && area < 12500 && perimeter >= 350 && perimeter < 700) return 1;
+    else if (area >= 8000 && area < 12500 && perimeter >= 350 && perimeter < 900) return 1;
     
     else return 0;
 }
