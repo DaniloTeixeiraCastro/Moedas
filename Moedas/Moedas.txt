@@ -416,3 +416,212 @@ NUMERO DE MOEDAS: 6
  -2 CENT: 0
  -1 CENT: 0
 
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:9:30 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 0
+ -20 CENT: 0
+ -10 CENT: 2
+ -5 CENT: 0
+ -2 CENT: 0
+ -1 CENT: 6
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:29:30 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 0
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 0
+ -1 CENT: 4
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:34:0 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 0
+ -1 CENT: 2
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:37:13 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:38:12 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:38:58 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:39:36 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:40:34 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:41:9 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video2.mp4 | HORA: 19-5-2025 12:42:34 ==
+NUMERO DE MOEDAS: 27
+ -2 EUROS: 1
+ -1 EURO: 4
+ -50 CENT: 2
+ -20 CENT: 4
+ -10 CENT: 2
+ -5 CENT: 3
+ -2 CENT: 2
+ -1 CENT: 9
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:46:49 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 1
+ -50 CENT: 2
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:48:1 ==
+NUMERO DE MOEDAS: 10
+ -2 EUROS: 0
+ -1 EURO: 1
+ -50 CENT: 2
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video2.mp4 | HORA: 19-5-2025 12:52:15 ==
+NUMERO DE MOEDAS: 27
+ -2 EUROS: 1
+ -1 EURO: 5
+ -50 CENT: 1
+ -20 CENT: 5
+ -10 CENT: 5
+ -5 CENT: 3
+ -2 CENT: 2
+ -1 CENT: 5
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 12:56:31 ==
+NUMERO DE MOEDAS: 9
+ -2 EUROS: 0
+ -1 EURO: 1
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 14:54:13 ==
+NUMERO DE MOEDAS: 9
+ -2 EUROS: 0
+ -1 EURO: 1
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 14:57:26 ==
+NUMERO DE MOEDAS: 9
+ -2 EUROS: 0
+ -1 EURO: 1
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 14:59:1 ==
+NUMERO DE MOEDAS: 9
+ -2 EUROS: 0
+ -1 EURO: 1
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 19-5-2025 15:4:57 ==
+NUMERO DE MOEDAS: 9
+ -2 EUROS: 0
+ -1 EURO: 1
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 1
+
+== VIDEO: C:/Moedas/videos/video2.mp4 | HORA: 19-5-2025 15:6:36 ==
+NUMERO DE MOEDAS: 24
+ -2 EUROS: 1
+ -1 EURO: 5
+ -50 CENT: 1
+ -20 CENT: 5
+ -10 CENT: 5
+ -5 CENT: 3
+ -2 CENT: 2
+ -1 CENT: 2
+
