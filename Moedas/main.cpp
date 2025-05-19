@@ -198,7 +198,7 @@ int main(int argc, const char* argv[]) {
         oss << std::fixed << std::setprecision(2) << soma;
         std::string text = "NR TOTAL DE MOEDAS: " + std::to_string(mTotal);
         cv::putText(frameorig, text, cv::Point(20, 30), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1);
-        text = "TOTAL: €" + oss.str();
+        text = "TOTAL: " + oss.str();
         cv::putText(frameorig, text, cv::Point(20, 50), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1);
         int y_offset = 70;
         text = "2 EUR: " + std::to_string(m200); cv::putText(frameorig, text, cv::Point(20, y_offset), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1); y_offset += 20;
@@ -210,7 +210,7 @@ int main(int argc, const char* argv[]) {
         text = "2 CENT: " + std::to_string(m2); cv::putText(frameorig, text, cv::Point(20, y_offset), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1); y_offset += 20;
         text = "1 CENT: " + std::to_string(m1); cv::putText(frameorig, text, cv::Point(20, y_offset), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1);
 
-        cv::imshow("Visão por Computador - TP2", frameorig);
+        cv::imshow("Visão", frameorig);
         cv::waitKey(1);
         int key = cv::waitKey(33);
         if (key == 'q') break;
