@@ -51,7 +51,7 @@ int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
     else if (area >= 12500 && area < 15500 && perimeter >= 450 && perimeter < 550) return 2;
 
     // 1 CENT: 
-    else if (area >= 9500 && area < 12500 && perimeter >= 350 && perimeter < 450) return 1;
+    else if (area >= 8000 && area < 12500 && perimeter >= 350 && perimeter < 1100) return 1;
     
     else return 0;
 }

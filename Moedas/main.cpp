@@ -136,7 +136,7 @@ int main(int argc, const char* argv[]) {
                 // Só processar moedas com circularidade razoável e tipo reconhecido
                 int tipo = idMoeda(moedas[i].area, moedas[i].perimeter, moedas[i].circularity, meanColor);
                 std::string tipoText;
-                if (tipo != 0 && moedas[i].circularity > 0.55) {
+                if (tipo != 0 && moedas[i].circularity > 0.1) {
                     switch (tipo) {
                     case 200: tipoText = "2 EUR"; break;
                     case 100: tipoText = "1 EUR"; break;
@@ -148,7 +148,7 @@ int main(int argc, const char* argv[]) {
                     case 1: tipoText = "1 CENT"; break;
                     default: tipoText = "DESCONHECIDO"; break;
                     }
-                    text = "TIPO: " + tipoText;
+                    text = "Valor: " + tipoText;
                     cv::putText(frameorig, text, cv::Point(moedas[i].xc + 90, moedas[i].yc + 20),
                         cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 0), 2);
                     cv::putText(frameorig, text, cv::Point(moedas[i].xc + 90, moedas[i].yc + 20),
