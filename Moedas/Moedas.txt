@@ -647,3 +647,47 @@ NUMERO DE MOEDAS: 10
  -2 CENT: 1
  -1 CENT: 1
 
+== VIDEO: C:/Moedas/videos/video2.mp4 | HORA: 19-5-2025 16:4:13 ==
+NUMERO DE MOEDAS: 29
+ -2 EUROS: 1
+ -1 EURO: 5
+ -50 CENT: 1
+ -20 CENT: 5
+ -10 CENT: 5
+ -5 CENT: 4
+ -2 CENT: 2
+ -1 CENT: 6
+
+== VIDEO: C:/Moedas/videos/video2.mp4 | HORA: 19-5-2025 16:5:42 ==
+NUMERO DE MOEDAS: 29
+ -2 EUROS: 1
+ -1 EURO: 5
+ -50 CENT: 1
+ -20 CENT: 5
+ -10 CENT: 5
+ -5 CENT: 4
+ -2 CENT: 2
+ -1 CENT: 6
+
+== VIDEO: C:/Moedas/videos/video2.mp4 | HORA: 19-5-2025 16:8:31 ==
+NUMERO DE MOEDAS: 29
+ -2 EUROS: 1
+ -1 EURO: 5
+ -50 CENT: 1
+ -20 CENT: 5
+ -10 CENT: 5
+ -5 CENT: 4
+ -2 CENT: 2
+ -1 CENT: 6
+
+== VIDEO: C:/Moedas/videos/video2.mp4 | HORA: 19-5-2025 16:14:42 ==
+NUMERO DE MOEDAS: 29
+ -2 EUROS: 1
+ -1 EURO: 5
+ -50 CENT: 1
+ -20 CENT: 5
+ -10 CENT: 5
+ -5 CENT: 4
+ -2 CENT: 2
+ -1 CENT: 6
+
