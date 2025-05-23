@@ -9,7 +9,6 @@
 #include <vector>
 #include <iomanip>
 
-// Função para calcular a média de cor (BGR) de um ROI
 cv::Vec3b mediaCorROI(const cv::Mat& img, int x, int y, int width, int height) {
     long sumB = 0, sumG = 0, sumR = 0, count = 0;
     for (int j = y; j < y + height && j < img.rows; ++j) {
@@ -61,7 +60,7 @@ int main(int argc, const char* argv[]) {
         width = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_WIDTH)),
         height = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_HEIGHT));
 
-    cv::namedWindow("Visão por Computador - TP2", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("Detetor de moedas", cv::WINDOW_AUTOSIZE);
 
     std::vector<OVC> passou;
     int cont = 0, mTotal = 0;
@@ -131,9 +130,9 @@ int main(int argc, const char* argv[]) {
                 cv::putText(frameorig, text, cv::Point(moedas[i].xc + 90, moedas[i].yc),
                     cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 8, 255), 1);
 
-                // Calcular média de cor do blob (substitui cv::mean e cv::Rect)
+                
                 cv::Vec3b meanColor = mediaCorROI(frameorig, moedas[i].x, moedas[i].y, moedas[i].width, moedas[i].height);
-                // Só processar moedas com circularidade razoável e tipo reconhecido
+                
                 int tipo = idMoeda(moedas[i].area, moedas[i].perimeter, moedas[i].circularity, meanColor);
                 std::string tipoText;
                 if (tipo != 0 && moedas[i].circularity > 0.1) {
@@ -196,7 +195,7 @@ int main(int argc, const char* argv[]) {
 
         std::ostringstream oss;
         oss << std::fixed << std::setprecision(2) << soma;
-        std::string text = "NR TOTAL DE MOEDAS: " + std::to_string(mTotal);
+        std::string text = "TOTAL DE MOEDAS: " + std::to_string(mTotal);
         cv::putText(frameorig, text, cv::Point(20, 30), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1);
         text = "TOTAL: " + oss.str();
         cv::putText(frameorig, text, cv::Point(20, 50), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1);
@@ -210,7 +209,7 @@ int main(int argc, const char* argv[]) {
         text = "2 CENT: " + std::to_string(m2); cv::putText(frameorig, text, cv::Point(20, y_offset), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1); y_offset += 20;
         text = "1 CENT: " + std::to_string(m1); cv::putText(frameorig, text, cv::Point(20, y_offset), cv::FONT_HERSHEY_PLAIN, 1.2, cv::Scalar(0, 0, 0), 1);
 
-        cv::imshow("Visão", frameorig);
+        cv::imshow("Detetor de moedas", frameorig);
         cv::waitKey(1);
         int key = cv::waitKey(33);
         if (key == 'q') break;

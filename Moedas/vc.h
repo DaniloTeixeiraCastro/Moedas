@@ -6,9 +6,6 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                        MACROS
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #ifndef MAX
 #define MAX(a,b) (a > b ? a : b)
 #endif
@@ -16,31 +13,25 @@
 #define MIN(a,b) (a < b ? a : b)
 #endif
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                   ESTRUTURA DE UMA IMAGEM
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 typedef struct {
-    unsigned char* data;      // Dados da imagem
-    int width, height;        // Dimensões da imagem
-    int channels;             // Número de canais (1 para binário/cinzentos, 3 para RGB)
-    int levels;               // Níveis de intensidade (1 para binário, [1,255] para cinzentos/RGB)
-    int bytesperline;         // Bytes por linha (width * channels)
+    unsigned char* data;      
+    int width, height;        
+    int channels;             
+    int levels;               
+    int bytesperline;         
 } IVC;
 
-// Estrutura para representar uma moeda detectada
 typedef struct {
-    int x, y, width, height;  // Coordenadas e dimensões da bounding box
-    int area;                 // Área em píxeis
-    int perimeter;            // Perímetro em píxeis
-    int xc, yc;               // Centro de massa
-    int label;                // Etiqueta do blob
-    int tipo;                 // Tipo de moeda (1, 2, 5, 10, 20, 50 cêntimos; 100, 200 euros)
-    double circularity;       // Circularidade (4π*área/perímetro²)
+    int x, y, width, height;  
+    int area;                 
+    int perimeter;            
+    int xc, yc;               
+    int label;                
+    int tipo;                 
+    double circularity;       
 } OVC;
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                    PROTÓTIPOS DE FUNÇÕES
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 IVC* vc_image_new(int width, int height, int channels, int levels);
 IVC* vc_image_free(IVC* image);
 
@@ -56,7 +47,7 @@ int desenha_linhaVerde(cv::Mat frame);
 
 int idBlobs(cv::Mat frameIn, cv::Mat frameOut, int hueMin, int hueMax, float satMin, float satMax, int valueMin, int valueMax);
 
-// Funções para lógica de detecção e classificação de moedas
+
 int verificaPassouAntes(OVC* passou, OVC moedas, int cont);
 int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor);
 void escreverInfo(FILE* fp, int cont, int mTotal, int m200, int m100, int m50, int m20, int m10, int m5, int m2, int m1, const char* videofile);
