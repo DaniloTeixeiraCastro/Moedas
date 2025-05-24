@@ -1,7 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <ctype.h>
-#include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <opencv2/core.hpp>
@@ -23,6 +21,8 @@ int verificaPassouAntes(OVC* passou, OVC moedas, int cont) {
 
 
 int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
+    // Nota: O parâmetro meanColor não é utilizado na classificação atual, 
+    // mas está mantido para compatibilidade e possível uso futuro
     
     if (area > 35000 || area < 3000) return 0;
     if (circularity < 0.05) return 0;
@@ -62,85 +62,7 @@ void escreverInfo(FILE* fp, int cont, int mTotal, int m200, int m100, int m50, i
     fprintf(fp, " -1 CENT: %d\n\n", m1);
 }
 
-IVC* vc_image_new(int width, int height, int channels, int levels) {
-    IVC* image = (IVC*)malloc(sizeof(IVC));
-    if (!image || levels <= 0 || levels > 255) return NULL;
-    image->width = width; image->height = height; image->channels = channels; image->levels = levels;
-    image->bytesperline = width * channels;
-    image->data = (unsigned char*)malloc(width * height * channels * sizeof(char));
-    return image->data ? image : vc_image_free(image);
-}
 
-IVC* vc_image_free(IVC* image) {
-    if (image) {
-        free(image->data);
-        free(image);
-    }
-    return NULL;
-}
-
-IVC* vc_read_image(char* filename) {
-    FILE* file = fopen(filename, "rb");
-    if (!file) return NULL;
-    IVC* image = NULL; unsigned char* tmp; char tok[20]; int width, height, channels = 1, levels = 255, v;
-    netpbm_get_token(file, tok, sizeof(tok));
-    if (strcmp(tok, "P4") == 0) levels = 1;
-    else if (strcmp(tok, "P5") == 0) channels = 1;
-    else if (strcmp(tok, "P6") == 0) channels = 3;
-    else { fclose(file); return NULL; }
-    if (levels == 1) {
-        if (sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &width) != 1 ||
-            sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &height) != 1) {
-            fclose(file); return NULL;
-        }
-        image = vc_image_new(width, height, channels, levels);
-        if (!image) return NULL;
-        long int sizeofbinarydata = (width / 8 + (width % 8 ? 1 : 0)) * height;
-        tmp = (unsigned char*)malloc(sizeofbinarydata);
-        if (!tmp || fread(tmp, 1, sizeofbinarydata, file) != sizeofbinarydata) {
-            vc_image_free(image); fclose(file); free(tmp); return NULL;
-        }
-        bit_to_unsigned_char(tmp, image->data, width, height);
-        free(tmp);
-    }
-    else {
-        if (sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &width) != 1 ||
-            sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &height) != 1 ||
-            sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &levels) != 1 || levels <= 0 || levels > 255) {
-            fclose(file); return NULL;
-        }
-        image = vc_image_new(width, height, channels, levels);
-        if (!image || fread(image->data, 1, width * height * channels, file) != width * height * channels) {
-            vc_image_free(image); fclose(file); return NULL;
-        }
-    }
-    fclose(file);
-    return image;
-}
-
-int vc_write_image(char* filename, IVC* image) {
-    if (!image) return 0;
-    FILE* file = fopen(filename, "wb");
-    if (!file) return 0;
-    if (image->levels == 1) {
-        unsigned char* tmp = (unsigned char*)malloc((image->width / 8 + (image->width % 8 ? 1 : 0)) * image->height + 1);
-        if (!tmp) { fclose(file); return 0; }
-        fprintf(file, "P4 %d %d\n", image->width, image->height);
-        long int totalbytes = unsigned_char_to_bit(image->data, tmp, image->width, image->height);
-        if (fwrite(tmp, 1, totalbytes, file) != totalbytes) {
-            fclose(file); free(tmp); return 0;
-        }
-        free(tmp);
-    }
-    else {
-        fprintf(file, "%s %d %d 255\n", (image->channels == 1) ? "P5" : "P6", image->width, image->height);
-        if (fwrite(image->data, image->bytesperline, image->height, file) != image->height) {
-            fclose(file); return 0;
-        }
-    }
-    fclose(file);
-    return 1;
-}
 
 OVC* vc_binary_blob_labelling(cv::Mat src, cv::Mat dst, int* nlabels) {
     if (src.empty() || dst.empty() || src.cols <= 0 || src.rows <= 0 || src.channels() != 1 ||
@@ -209,27 +131,3 @@ int desenha_linhaVermelha(cv::Mat frame) {
     return 1;
 }
 
-char* netpbm_get_token(FILE* file, char* tok, int len) {
-    char* t; int c;
-    for (;;) { while (isspace(c = getc(file))); if (c != '#') break; do c = getc(file); while (c != '\n' && c != EOF); if (c == EOF) break; }
-    t = tok; if (c != EOF) do { *t++ = c; c = getc(file); } while (!isspace(c) && c != '#' && c != EOF && t - tok < len - 1);
-    if (c == '#') ungetc(c, file); *t = 0; return tok;
-}
-
-long int unsigned_char_to_bit(unsigned char* datauchar, unsigned char* databit, int width, int height) {
-    int x, y, countbits; long int pos, counttotalbytes; unsigned char* p = databit;
-    *p = 0; countbits = 1; counttotalbytes = 0;
-    for (y = 0; y < height; y++) for (x = 0; x < width; x++) {
-        pos = width * y + x; if (countbits <= 8) { *p |= (datauchar[pos] == 0) << (8 - countbits); countbits++; }
-        if (countbits > 8 || x == width - 1) { p++; *p = 0; countbits = 1; counttotalbytes++; }
-    }
-    return counttotalbytes;
-}
-
-void bit_to_unsigned_char(unsigned char* databit, unsigned char* datauchar, int width, int height) {
-    int x, y, countbits; long int pos; unsigned char* p = databit;
-    countbits = 1; for (y = 0; y < height; y++) for (x = 0; x < width; x++) {
-        pos = width * y + x; if (countbits <= 8) datauchar[pos] = (*p & (1 << (8 - countbits))) ? 0 : 1;
-        if (countbits > 8 || x == width - 1) { p++; countbits = 1; }
-    }
-}

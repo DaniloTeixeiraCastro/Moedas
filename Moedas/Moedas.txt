@@ -757,3 +757,14 @@ NUMERO DE MOEDAS: 11
  -2 CENT: 1
  -1 CENT: 2
 
+== VIDEO: C:/Moedas/videos/video1.mp4 | HORA: 24-5-2025 14:38:35 ==
+NUMERO DE MOEDAS: 11
+ -2 EUROS: 0
+ -1 EURO: 2
+ -50 CENT: 1
+ -20 CENT: 2
+ -10 CENT: 2
+ -5 CENT: 1
+ -2 CENT: 1
+ -1 CENT: 2
+

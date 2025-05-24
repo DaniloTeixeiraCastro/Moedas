@@ -14,14 +14,6 @@
 #endif
 
 typedef struct {
-    unsigned char* data;      
-    int width, height;        
-    int channels;             
-    int levels;               
-    int bytesperline;         
-} IVC;
-
-typedef struct {
     int x, y, width, height;  
     int area;                 
     int perimeter;            
@@ -30,13 +22,6 @@ typedef struct {
     int tipo;                 
     double circularity;       
 } OVC;
-
-
-IVC* vc_image_new(int width, int height, int channels, int levels);
-IVC* vc_image_free(IVC* image);
-
-IVC* vc_read_image(char* filename);
-int vc_write_image(char* filename, IVC* image);
 
 OVC* vc_binary_blob_labelling(cv::Mat src, cv::Mat dst, int* nlabels);
 int vc_binary_blob_info(cv::Mat src, OVC* blobs, int nblobs);
@@ -52,6 +37,3 @@ int verificaPassouAntes(OVC* passou, OVC moedas, int cont);
 int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor);
 void escreverInfo(FILE* fp, int cont, int mTotal, int m200, int m100, int m50, int m20, int m10, int m5, int m2, int m1, const char* videofile);
 
-char* netpbm_get_token(FILE* file, char* tok, int len);
-long int unsigned_char_to_bit(unsigned char* datauchar, unsigned char* databit, int width, int height);
-void bit_to_unsigned_char(unsigned char* databit, unsigned char* datauchar, int width, int height);

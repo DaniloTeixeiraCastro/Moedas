@@ -100,11 +100,9 @@ int main(int argc, const char* argv[]) {
             std::cerr << "Erro no cálculo de propriedades dos blobs!\n"; free(moedas); continue;
         }
 
-        desenha_linhaVermelha(frameorig);
-        for (int i = 0; i < nMoedas; i++) {
+        desenha_linhaVermelha(frameorig);        for (int i = 0; i < nMoedas; i++) {
             if (moedas[i].area > 8000) {
-                moedas[i].circularity = (moedas[i].perimeter > 0) ? 
-                    (4.0f * CV_PI * moedas[i].area) / (moedas[i].perimeter * moedas[i].perimeter) : 0.0f;
+                // A circularidade já foi calculada em vc_binary_blob_info(), não precisamos recalcular aqui
 
                 std::string text = "x: " + std::to_string(moedas[i].xc) + ", y: " + std::to_string(moedas[i].yc);
                 cv::putText(frameorig, text, cv::Point(moedas[i].xc + 90, moedas[i].yc - 60),
