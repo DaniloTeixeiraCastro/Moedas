@@ -153,23 +153,24 @@ int verificaPassouAntes(OVC* passou, OVC moedas, int cont) {
 int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
     
     if (area > 35000 || area < 3000) return 0;
-    if (circularity < 0.05) return 0;
+    if (circularity < 0.05) return 0;  // Reduzindo o limiar de circularidade para maior tolerância
  
-    if (area >= 26000 && area < 29000 && perimeter >= 700 && perimeter < 850) return 200;
+    // Ajuste para moeda de 2€ - incluindo range de área e perímetro maior para contemplar a parte azulada externa
+    if (area >= 24500 && area < 29000 && perimeter >= 900 && perimeter < 1800) return 200;
 
-    else if (area >= 20610 && area < 24000 && perimeter >= 600 && perimeter < 750) return 100;
+    else if (area >= 20500 && area < 24000 && perimeter >= 660 && perimeter < 1800) return 100;
 
-    else if (area >= 24000 && area < 26000 && perimeter >= 600 && perimeter < 800) return 50;
+    else if (area >= 25000 && area < 29500 && perimeter >= 660 && perimeter < 900) return 50;
 
-    else if (area >= 19500 && area < 22000 && perimeter >= 550 && perimeter < 650) return 20;
+    else if (area >= 20000 && area < 25000 && perimeter >= 580 && perimeter < 660) return 20;
  
-    else if (area >= 16000 && area < 17500 && perimeter >= 500 && perimeter < 650) return 10;
+    else if (area >= 15000 && area < 20500 && perimeter >= 500 && perimeter < 950) return 10;
 
-    else if (area >= 17500 && area < 20000 && perimeter >= 550 && perimeter < 700) return 5;
+    else if (area >= 17500 && area < 21000 && perimeter >= 550 && perimeter < 700) return 5;
  
-    else if (area >= 12500 && area < 15500 && perimeter >= 450 && perimeter < 600) return 2;
+    else if (area >= 13000 && area < 15000 && perimeter >= 500 && perimeter < 600) return 2;
  
-    else if (area >= 8000 && area < 12500 && perimeter >= 350 && perimeter < 950) return 1;
+    else if (area >= 8000 && area < 13000 && perimeter >= 350 && perimeter < 500) return 1;
     
     else return 0;
 }
@@ -575,9 +576,7 @@ int vc_binary_blob_info_ivc(IVC* src, OVC* blobs, int nblobs) {
             blobs[i].width = blobs[i].width - blobs[i].x + 1;
             blobs[i].height = blobs[i].height - blobs[i].y + 1;
         }
-    }
-    
-    // Segunda passagem: cálculo do perímetro
+    }    // Segunda passagem: cálculo do perímetro
     for (i = 1; i < height - 1; i++) {
         for (j = 1; j < width - 1; j++) {
             pixelpos = i * bytesperline + j;
@@ -598,9 +597,7 @@ int vc_binary_blob_info_ivc(IVC* src, OVC* blobs, int nblobs) {
                 }
             }
         }
-    }
-    
-    // Calcular circularidade
+    }    // Calcular circularidade
     for (i = 0; i < nblobs; i++) {
         if (blobs[i].perimeter > 0) {
             blobs[i].circularity = (4.0 * M_PI * blobs[i].area) / (blobs[i].perimeter * blobs[i].perimeter);
@@ -610,49 +607,43 @@ int vc_binary_blob_info_ivc(IVC* src, OVC* blobs, int nblobs) {
     return 1;
 }
 
-// FUNÇÃO PARA DESENHAR CAIXA DELIMITADORA
+// FUNÇÃO PARA DESENHAR CÍRCULO DELIMITADOR (SUBSTITUINDO A CAIXA)
 int vc_draw_bounding_box(IVC* src, OVC blobs) {
     unsigned char* data = (unsigned char*)src->data;
     int width = src->width;
     int height = src->height;
     int bytesperline = src->bytesperline;
     int channels = src->channels;
-    int i, j;
     
     // Verificação de erros
     if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
-    if (channels != 3) return 0;
+    if (channels != 3) return 0;    // Cor magenta menos intensa - B=200, G=0, R=200 (BGR)
+    int color[3] = { 200, 0, 200 };    // Ao invés de tentar calcular centros diferentes, vamos usar os próprios
+    // centros da moeda para o círculo, já que o problema parece ser o deslocamento
+    // causado pelo centro da caixa delimitadora incorretamente calculado
     
-    // Desenhar caixa delimitadora
-    int x1 = blobs.x;
-    int y1 = blobs.y;
-    int x2 = blobs.x + blobs.width - 1;
-    int y2 = blobs.y + blobs.height - 1;
-    
-    // Garantir que estamos dentro dos limites da imagem
-    x1 = MAX(0, MIN(width - 1, x1));
-    y1 = MAX(0, MIN(height - 1, y1));
-    x2 = MAX(0, MIN(width - 1, x2));
-    y2 = MAX(0, MIN(height - 1, y2));
-    
-    // Cor vermelha
-    int color[3] = { 0, 0, 255 };
-    
-    // Desenhar as quatro linhas da caixa
-    vc_draw_line(src, x1, y1, x2, y1, color);  // Linha superior
-    vc_draw_line(src, x1, y2, x2, y2, color);  // Linha inferior
-    vc_draw_line(src, x1, y1, x1, y2, color);  // Linha esquerda
-    vc_draw_line(src, x2, y1, x2, y2, color);  // Linha direita
-    
-    // Desenhar centro de massa
-    int radius = (int)(sqrt(blobs.area / M_PI) * 0.1);  // 10% do raio estimado
-    radius = MAX(2, MIN(10, radius));  // Entre 2 e 10 pixels
-    
+    // Para o círculo e para o ponto central, vamos usar o mesmo centro (centro de massa)
+    // que deve estar corretamente posicionado de acordo com a imagem
     int cx = blobs.xc;
     int cy = blobs.yc;
     
-    // Desenhar círculo para representar o centro de massa
-    vc_draw_circle(src, cx, cy, radius, color, 1);
+    // Vamos armazenar os mesmos valores para manter a compatibilidade com o código posterior
+    int centerMassX = blobs.xc;
+    int centerMassY = blobs.yc;    // Calcular o raio baseado na área da moeda
+    // Assumindo que a moeda é circular: A = π*r²
+    // Reduzir o fator para um valor menor para ajustar melhor o círculo ao contorno da moeda
+    // O valor 0.92 (92%) deve fornecer um círculo que se ajusta melhor ao contorno real
+    int detectionRadius = (int)(sqrt(blobs.area / M_PI) * 0.92);    // Desenhar o círculo delimitador usando o centro de massa como referência
+    // Com o novo fator de escala, o círculo deve ficar mais ajustado ao contorno da moeda
+    vc_draw_circle(src, cx, cy, detectionRadius, color, 0);
+    // Adicionar um segundo círculo concêntrico muito próximo para criar um efeito de linha mais fina e precisa
+    vc_draw_circle(src, cx, cy, detectionRadius-1, color, 0);
+      // Desenhar centro de massa com um ponto menor e mais preciso
+    int smallRadius = (int)(sqrt(blobs.area / M_PI) * 0.08);  // 8% do raio estimado
+    smallRadius = MAX(2, MIN(6, smallRadius));  // Entre 2 e 6 pixels
+    
+    // Desenhar círculo para representar o centro de massa (usando o centro de massa real)
+    vc_draw_circle(src, centerMassX, centerMassY, smallRadius, color, 1);
     
     return 1;
 }
@@ -1049,4 +1040,6 @@ cv::Mat ivc_to_cv_mat(IVC* src) {
     
     return mat;
 }
+
+
 

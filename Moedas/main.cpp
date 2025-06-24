@@ -32,7 +32,7 @@ int main(int argc, const char* argv[]) {
         videofile = argv[1];
     }
     else {
-        std::cout << "Escolha o vídeo para processar:\n";
+        std::cout << "Escolha o video para processar:\n";
         std::cout << "1 - C:/Moedas/videos/video1.mp4\n";
         std::cout << "2 - C:/Moedas/videos/video2.mp4\n";
         std::cout << "Opcao: ";
@@ -88,9 +88,7 @@ int main(int argc, const char* argv[]) {
 
         int currentFrame = static_cast<int>(capture.get(cv::CAP_PROP_POS_FRAMES));
 
-        cv::Mat framethr = cv::Mat::zeros(frameorig.size(), CV_8UC1);
-
-        if (!idBlobs(frameorig, framethr, 12, 150, 35.0f, 255.0f, 20, 150)) {
+        cv::Mat framethr = cv::Mat::zeros(frameorig.size(), CV_8UC1);        if (!idBlobs(frameorig, framethr, 9, 170, 25.0f, 255.0f, 20, 220)) {
             std::cerr << "Erro na segmentação HSV!\n"; continue;
         }
 
@@ -179,9 +177,7 @@ int main(int argc, const char* argv[]) {
                         
                         // Liberar memória
                         vc_image_free(ivcFrame);
-                    }
-
-                    vc_desenha_bounding_box(frameorig, moedas[i]);
+                    }                    vc_desenha_bounding_box(frameorig, moedas[i]);
 
                     if (height / 4 >= moedas[i].yc - 15 && height / 4 <= moedas[i].yc + 20) {
                         desenha_linhaVerde(frameorig);
