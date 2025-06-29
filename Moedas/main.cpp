@@ -33,16 +33,16 @@ int main(int argc, const char* argv[]) {
     }
     else {
         std::cout << "Escolha o video para processar:\n";
-        std::cout << "1 - C:/Moedas/videos/video1.mp4\n";
-        std::cout << "2 - C:/Moedas/videos/video2.mp4\n";
+        std::cout << "1 - C:/VC-PL-TP/videos/video1.mp4\n";
+        std::cout << "2 - C:/VC-PL-TP/videos/video2.mp4\n";
         std::cout << "Opcao: ";
         int opcao = 0;
         std::cin >> opcao;
         if (opcao == 1) {
-            videofile = "C:/Moedas/videos/video1.mp4";
+            videofile = "C:/VC-PL-TP/videos/video1.mp4";
         }
         else if (opcao == 2) {
-            videofile = "C:/Moedas/videos/video2.mp4";
+            videofile = "C:/VC-PL-TP/videos/video2.mp4";
         }
         else {
             std::cerr << "Opcao inválida!\n";
@@ -63,6 +63,17 @@ int main(int argc, const char* argv[]) {
 
     cv::namedWindow("Detetor de moedas", cv::WINDOW_AUTOSIZE);
 
+    //--- Adicionar janela e trackbars para ajuste HSV ---
+    cv::namedWindow("Segmentacao HSV", cv::WINDOW_AUTOSIZE);
+    int hmin = 10, hmax = 80, smin = 25, smax = 255, vmin = 20, vmax = 150;
+    cv::createTrackbar("Hmin", "Segmentacao HSV", &hmin, 179);
+    cv::createTrackbar("Hmax", "Segmentacao HSV", &hmax, 179);
+    cv::createTrackbar("Smin", "Segmentacao HSV", &smin, 255);
+    cv::createTrackbar("Smax", "Segmentacao HSV", &smax, 255);
+    cv::createTrackbar("Vmin", "Segmentacao HSV", &vmin, 255);
+    cv::createTrackbar("Vmax", "Segmentacao HSV", &vmax, 255);
+
+
     std::vector<OVC> passou;
     int cont = 0, mTotal = 0;
     float soma = 0.0;
@@ -77,6 +88,7 @@ int main(int argc, const char* argv[]) {
     cv::Mat frameorig;
     bool paused = false;
     std::cout << "Pressione 'q' para sair, 'p' para pausar.\n";
+
     while (true) {
         if (!paused) {
             capture >> frameorig;
@@ -88,9 +100,52 @@ int main(int argc, const char* argv[]) {
 
         int currentFrame = static_cast<int>(capture.get(cv::CAP_PROP_POS_FRAMES));
 
-        cv::Mat framethr = cv::Mat::zeros(frameorig.size(), CV_8UC1);        if (!idBlobs(frameorig, framethr, 9, 170, 25.0f, 255.0f, 20, 220)) {
+        cv::Mat framethr(frameorig.size(), CV_8UC1);
+
+       
+        // Pegue os valores atuais das trackbars
+        hmin = cv::getTrackbarPos("Hmin", "Segmentacao HSV");
+        hmax = cv::getTrackbarPos("Hmax", "Segmentacao HSV");
+        smin = cv::getTrackbarPos("Smin", "Segmentacao HSV");
+        smax = cv::getTrackbarPos("Smax", "Segmentacao HSV");
+        vmin = cv::getTrackbarPos("Vmin", "Segmentacao HSV");
+        vmax = cv::getTrackbarPos("Vmax", "Segmentacao HSV");
+
+        // Passe esses valores para a função de segmentação
+        if (!idBlobs(frameorig, framethr, hmin, hmax, smin, smax, vmin, vmax)) {
             std::cerr << "Erro na segmentação HSV!\n"; continue;
         }
+
+        cv::imshow("Segmentacao HSV", framethr);
+
+        //if (!idBlobs(frameorig, framethr, 12, 150, 35, 255, 20, 150)) {
+            //std::cerr << "Erro na segmentação HSV!\n"; continue;
+        //}
+
+        // Após a segmentação HSV (framethr já contém a imagem binária)
+        IVC* ivcIn = cv_mat_to_ivc(framethr);
+        IVC* ivcTemp1 = vc_image_new(ivcIn->width, ivcIn->height, 1, 255);
+        IVC* ivcTemp2 = vc_image_new(ivcIn->width, ivcIn->height, 1, 255);
+        IVC* ivcOut = vc_image_new(ivcIn->width, ivcIn->height, 1, 255);
+
+        // Abertura: erosão seguida de dilatação
+        vc_erode(ivcIn, ivcTemp1, 5);
+        vc_dilate(ivcTemp1, ivcTemp2, 5);
+
+        // Fechamento: dilatação seguida de erosão
+        vc_dilate(ivcTemp2, ivcTemp1, 5);
+        vc_erode(ivcTemp1, ivcOut, 5);
+
+        // Copiar resultado de volta para o Mat do OpenCV
+        cv::Mat tempMat(framethr.rows, framethr.cols, CV_8UC1, ivcOut->data);
+        tempMat.copyTo(framethr);
+
+        // Liberar memória
+        vc_image_free(ivcIn);
+        vc_image_free(ivcTemp1);
+        vc_image_free(ivcTemp2);
+        vc_image_free(ivcOut);
+
 
         int nMoedas = 0;
         OVC* moedas = vc_binary_blob_labelling(framethr, framethr, &nMoedas);
@@ -177,7 +232,9 @@ int main(int argc, const char* argv[]) {
                         
                         // Liberar memória
                         vc_image_free(ivcFrame);
-                    }                    vc_desenha_bounding_box(frameorig, moedas[i]);
+                    }
+
+                    vc_desenha_bounding_box(frameorig, moedas[i]);
 
                     if (height / 4 >= moedas[i].yc - 15 && height / 4 <= moedas[i].yc + 20) {
                         desenha_linhaVerde(frameorig);
@@ -285,7 +342,8 @@ int main(int argc, const char* argv[]) {
     escreverInfo(fp, cont, mTotal, m200, m100, m50, m20, m10, m5, m2, m1, videofile.c_str());
     fclose(fp);
     capture.release();
-    cv::destroyAllWindows();
+    cv::destroyWindow("Detetor de moedas");
+    cv::destroyWindow("Segmentacao HSV");
     std::cout << "Programa terminado.\n";
     return 0;
 }

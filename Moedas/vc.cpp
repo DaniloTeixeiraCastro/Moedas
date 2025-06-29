@@ -152,25 +152,24 @@ int verificaPassouAntes(OVC* passou, OVC moedas, int cont) {
 
 int idMoeda(int area, int perimeter, float circularity, cv::Vec3b meanColor) {
     
-    if (area > 35000 || area < 3000) return 0;
-    if (circularity < 0.05) return 0;  // Reduzindo o limiar de circularidade para maior tolerância
+    if (area > 35000 || area < 5000) return 0;
+    if (circularity < 0.05) return 0;
  
-    // Ajuste para moeda de 2€ - incluindo range de área e perímetro maior para contemplar a parte azulada externa
-    if (area >= 24500 && area < 29000 && perimeter >= 900 && perimeter < 1800) return 200;
+    if (area >= 22000 && area < 29000 && perimeter >= 700 && perimeter < 1300) return 200;
 
-    else if (area >= 20500 && area < 24000 && perimeter >= 660 && perimeter < 1800) return 100;
+    else if (area >= 10500 && area < 24000 && perimeter >= 660 && perimeter < 1500) return 100;
 
-    else if (area >= 25000 && area < 29500 && perimeter >= 660 && perimeter < 900) return 50;
+    else if (area >= 24000 && area < 27500 && perimeter >= 550 && perimeter < 700) return 50;
 
-    else if (area >= 20000 && area < 25000 && perimeter >= 580 && perimeter < 660) return 20;
+    else if (area >= 19000 && area < 22000 && perimeter >= 510 && perimeter < 670) return 20;
  
-    else if (area >= 15000 && area < 20500 && perimeter >= 500 && perimeter < 950) return 10;
+    else if (area >= 16000 && area < 18500 && perimeter >= 435 && perimeter < 620) return 10;
 
-    else if (area >= 17500 && area < 21000 && perimeter >= 550 && perimeter < 700) return 5;
+    else if (area >= 17500 && area < 20500 && perimeter >= 450 && perimeter < 600) return 5;
+
+    else if (area >= 12500 && area < 15500 && perimeter >= 410 && perimeter < 570) return 2;
  
-    else if (area >= 13000 && area < 15000 && perimeter >= 500 && perimeter < 600) return 2;
- 
-    else if (area >= 8000 && area < 13000 && perimeter >= 350 && perimeter < 500) return 1;
+    else if (area >= 9600 && area < 12500 && perimeter >= 350 && perimeter < 600) return 1;
     
     else return 0;
 }
@@ -346,39 +345,73 @@ int vc_hsv_segmentation(IVC* src, IVC* dst, int hmin, int hmax, int smin, int sm
     return 1;
 }
 
-// FUNÇÃO PARA CONVERTER BGR PARA TONS DE CINZA
-int vc_convert_bgr_to_gray(IVC* src, IVC* dst) {
-    unsigned char* datasrc = (unsigned char*)src->data;
-    unsigned char* datadst = (unsigned char*)dst->data;
-    int width = src->width;
-    int height = src->height;
-    int bytesperline_src = src->bytesperline;
-    int bytesperline_dst = dst->bytesperline;
-    int channels_src = src->channels;
-    int channels_dst = dst->channels;
-    int b, g, r;
-    int i, j;
-    float gray;
 
-    // Verificação de erros
-    if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL) || (dst->data == NULL)) return 0;
-    if ((src->width != dst->width) || (src->height != dst->height)) return 0;
-    if ((src->channels != 3) || (dst->channels != 1)) return 0;
+// FUNÇÕES DE MORFOLOGIA PARA DILATAÇÃO E EROSÃO
 
-    for (i = 0; i < height; i++) {
-        for (j = 0; j < width; j++) {
-            b = (int)datasrc[i * bytesperline_src + j * channels_src + 0];
-            g = (int)datasrc[i * bytesperline_src + j * channels_src + 1];
-            r = (int)datasrc[i * bytesperline_src + j * channels_src + 2];
-
-            // Conversão ponderada (baseada na sensibilidade do olho humano)
-            gray = 0.299f * r + 0.587f * g + 0.114f * b;
-
-            datadst[i * bytesperline_dst + j] = (unsigned char)gray;
+// Dilatação binária (kernel quadrado de tamanho kernel_size)
+int vc_dilate(IVC* src, IVC* dst, int kernel_size)
+{
+    if (!src || !dst || src->channels != 1 || dst->channels != 1) return 0;
+    int offset = kernel_size / 2;
+    for (int y = 0; y < src->height; y++)
+    {
+        for (int x = 0; x < src->width; x++)
+        {
+            int found = 0;
+            for (int ky = -offset; ky <= offset; ky++)
+            {
+                for (int kx = -offset; kx <= offset; kx++)
+                {
+                    int nx = x + kx;
+                    int ny = y + ky;
+                    if (nx >= 0 && nx < src->width && ny >= 0 && ny < src->height)
+                    {
+                        if (src->data[ny * src->bytesperline + nx] == 255)
+                        {
+                            found = 1;
+                            break;
+                        }
+                    }
+                }
+                if (found) break;
+            }
+            dst->data[y * dst->bytesperline + x] = found ? 255 : 0;
         }
     }
     return 1;
 }
+
+// Erosão binária (kernel quadrado de tamanho kernel_size)
+int vc_erode(IVC* src, IVC* dst, int kernel_size)
+{
+    if (!src || !dst || src->channels != 1 || dst->channels != 1) return 0;
+    int offset = kernel_size / 2;
+    for (int y = 0; y < src->height; y++)
+    {
+        for (int x = 0; x < src->width; x++)
+        {
+            int all = 1;
+            for (int ky = -offset; ky <= offset; ky++)
+            {
+                for (int kx = -offset; kx <= offset; kx++)
+                {
+                    int nx = x + kx;
+                    int ny = y + ky;
+                    if (nx < 0 || nx >= src->width || ny < 0 || ny >= src->height ||
+                        src->data[ny * src->bytesperline + nx] != 255)
+                    {
+                        all = 0;
+                        break;
+                    }
+                }
+                if (!all) break;
+            }
+            dst->data[y * dst->bytesperline + x] = all ? 255 : 0;
+        }
+    }
+    return 1;
+}
+
 
 // FUNÇÃO PARA ETIQUETAGEM DE COMPONENTES CONECTADOS
 OVC* vc_component_labelling(IVC* src, IVC* dst, int* nlabels) {
@@ -576,7 +609,9 @@ int vc_binary_blob_info_ivc(IVC* src, OVC* blobs, int nblobs) {
             blobs[i].width = blobs[i].width - blobs[i].x + 1;
             blobs[i].height = blobs[i].height - blobs[i].y + 1;
         }
-    }    // Segunda passagem: cálculo do perímetro
+    }
+    
+    // Segunda passagem: cálculo do perímetro
     for (i = 1; i < height - 1; i++) {
         for (j = 1; j < width - 1; j++) {
             pixelpos = i * bytesperline + j;
@@ -597,7 +632,9 @@ int vc_binary_blob_info_ivc(IVC* src, OVC* blobs, int nblobs) {
                 }
             }
         }
-    }    // Calcular circularidade
+    }
+    
+    // Calcular circularidade
     for (i = 0; i < nblobs; i++) {
         if (blobs[i].perimeter > 0) {
             blobs[i].circularity = (4.0 * M_PI * blobs[i].area) / (blobs[i].perimeter * blobs[i].perimeter);
@@ -607,43 +644,49 @@ int vc_binary_blob_info_ivc(IVC* src, OVC* blobs, int nblobs) {
     return 1;
 }
 
-// FUNÇÃO PARA DESENHAR CÍRCULO DELIMITADOR (SUBSTITUINDO A CAIXA)
+// FUNÇÃO PARA DESENHAR CAIXA DELIMITADORA
 int vc_draw_bounding_box(IVC* src, OVC blobs) {
     unsigned char* data = (unsigned char*)src->data;
     int width = src->width;
     int height = src->height;
     int bytesperline = src->bytesperline;
     int channels = src->channels;
+    int i, j;
     
     // Verificação de erros
     if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
-    if (channels != 3) return 0;    // Cor magenta menos intensa - B=200, G=0, R=200 (BGR)
-    int color[3] = { 200, 0, 200 };    // Ao invés de tentar calcular centros diferentes, vamos usar os próprios
-    // centros da moeda para o círculo, já que o problema parece ser o deslocamento
-    // causado pelo centro da caixa delimitadora incorretamente calculado
+    if (channels != 3) return 0;
     
-    // Para o círculo e para o ponto central, vamos usar o mesmo centro (centro de massa)
-    // que deve estar corretamente posicionado de acordo com a imagem
+    // Desenhar caixa delimitadora
+    int x1 = blobs.x;
+    int y1 = blobs.y;
+    int x2 = blobs.x + blobs.width - 1;
+    int y2 = blobs.y + blobs.height - 1;
+    
+    // Garantir que estamos dentro dos limites da imagem
+    x1 = MAX(0, MIN(width - 1, x1));
+    y1 = MAX(0, MIN(height - 1, y1));
+    x2 = MAX(0, MIN(width - 1, x2));
+    y2 = MAX(0, MIN(height - 1, y2));
+    
+    // Cor vermelha
+    int color[3] = { 0, 0, 255 };
+    
+    // Desenhar as quatro linhas da caixa
+    vc_draw_line(src, x1, y1, x2, y1, color);  // Linha superior
+    vc_draw_line(src, x1, y2, x2, y2, color);  // Linha inferior
+    vc_draw_line(src, x1, y1, x1, y2, color);  // Linha esquerda
+    vc_draw_line(src, x2, y1, x2, y2, color);  // Linha direita
+    
+    // Desenhar centro de massa
+    int radius = (int)(sqrt(blobs.area / M_PI) * 0.1);  // 10% do raio estimado
+    radius = MAX(2, MIN(10, radius));  // Entre 2 e 10 pixels
+    
     int cx = blobs.xc;
     int cy = blobs.yc;
     
-    // Vamos armazenar os mesmos valores para manter a compatibilidade com o código posterior
-    int centerMassX = blobs.xc;
-    int centerMassY = blobs.yc;    // Calcular o raio baseado na área da moeda
-    // Assumindo que a moeda é circular: A = π*r²
-    // Reduzir o fator para um valor menor para ajustar melhor o círculo ao contorno da moeda
-    // O valor 0.92 (92%) deve fornecer um círculo que se ajusta melhor ao contorno real
-    int detectionRadius = (int)(sqrt(blobs.area / M_PI) * 0.92);    // Desenhar o círculo delimitador usando o centro de massa como referência
-    // Com o novo fator de escala, o círculo deve ficar mais ajustado ao contorno da moeda
-    vc_draw_circle(src, cx, cy, detectionRadius, color, 0);
-    // Adicionar um segundo círculo concêntrico muito próximo para criar um efeito de linha mais fina e precisa
-    vc_draw_circle(src, cx, cy, detectionRadius-1, color, 0);
-      // Desenhar centro de massa com um ponto menor e mais preciso
-    int smallRadius = (int)(sqrt(blobs.area / M_PI) * 0.08);  // 8% do raio estimado
-    smallRadius = MAX(2, MIN(6, smallRadius));  // Entre 2 e 6 pixels
-    
-    // Desenhar círculo para representar o centro de massa (usando o centro de massa real)
-    vc_draw_circle(src, centerMassX, centerMassY, smallRadius, color, 1);
+    // Desenhar círculo para representar o centro de massa
+    vc_draw_circle(src, cx, cy, radius, color, 1);
     
     return 1;
 }
@@ -960,52 +1003,6 @@ int vc_put_text(IVC* src, const char* text, int x, int y, int color[3], int font
     return 1;
 }
 
-// FUNÇÃO PARA CALCULAR A MÉDIA DE COR EM UMA REGIÃO DE INTERESSE
-unsigned char* vc_media_cor_roi(IVC* src, int x, int y, int width, int height) {
-    unsigned char* data = (unsigned char*)src->data;
-    int imgWidth = src->width;
-    int imgHeight = src->height;
-    int bytesperline = src->bytesperline;
-    int channels = src->channels;
-    long sumB = 0, sumG = 0, sumR = 0, count = 0;
-    int i, j;
-    
-    // Verificação de erros
-    if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return NULL;
-    if (channels != 3) return NULL;
-    
-    // Garantir que a ROI está dentro dos limites da imagem
-    int x1 = MAX(0, x);
-    int y1 = MAX(0, y);
-    int x2 = MIN(imgWidth - 1, x + width - 1);
-    int y2 = MIN(imgHeight - 1, y + height - 1);
-    
-    // Calcular a média de cor na ROI
-    for (j = y1; j <= y2; j++) {
-        for (i = x1; i <= x2; i++) {
-            sumB += data[j * bytesperline + i * channels + 0];
-            sumG += data[j * bytesperline + i * channels + 1];
-            sumR += data[j * bytesperline + i * channels + 2];
-            count++;
-        }
-    }
-    
-    // Alocar e retornar o vetor de médias
-    unsigned char* meanColor = (unsigned char*)malloc(3 * sizeof(unsigned char));
-    if (meanColor && count > 0) {
-        meanColor[0] = (unsigned char)(sumB / count);  // B
-        meanColor[1] = (unsigned char)(sumG / count);  // G
-        meanColor[2] = (unsigned char)(sumR / count);  // R
-    }
-    else if (meanColor) {
-        meanColor[0] = 0;
-        meanColor[1] = 0;
-        meanColor[2] = 0;
-    }
-    
-    return meanColor;
-}
-
 // FUNÇÕES DE CONVERSÃO ENTRE CV::MAT E IVC
 IVC* cv_mat_to_ivc(cv::Mat src) {
     IVC* ivc = NULL;
@@ -1021,25 +1018,4 @@ IVC* cv_mat_to_ivc(cv::Mat src) {
     
     return ivc;
 }
-
-cv::Mat ivc_to_cv_mat(IVC* src) {
-    cv::Mat mat;
-    
-    if (src && src->data) {
-        int type;
-        
-        switch (src->channels) {
-        case 1: type = CV_8UC1; break;
-        case 3: type = CV_8UC3; break;
-        default: return mat; // Retorna matriz vazia se o número de canais não for suportado
-        }
-        
-        mat = cv::Mat(src->height, src->width, type);
-        memcpy(mat.data, src->data, src->width * src->height * src->channels);
-    }
-    
-    return mat;
-}
-
-
 
